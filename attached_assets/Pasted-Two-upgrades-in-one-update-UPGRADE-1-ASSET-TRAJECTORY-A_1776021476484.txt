@@ -1,0 +1,25 @@
+Two upgrades in one update:
+UPGRADE 1 — ASSET TRAJECTORY:
+Add a trajectory indicator to every player across the entire app — trade analyzer, find a trade, my team, all teams. Calculate it like this:
+	•	Rising 🟢 — age 25 or under, OR FC value increased recently, OR high draft capital rookie in breakout situation
+	•	Stable 🟡 — age 26-29, established starter, consistent value
+	•	Declining 🔴 — age 30 or older, OR injury history flag in Sleeper data, OR backup risk
+Show the trajectory arrow next to every player’s FC value badge. In all trade analysis, factor trajectory into the verdict — a value-even trade where you give rising assets for declining ones should be flagged as unfavorable even if FC values match today. Add a line in every trade verdict that says: ‘Trajectory note: You are giving [rising/stable/declining] assets for [rising/stable/declining] assets’ and factor this into the fairness score.
+UPGRADE 2 — TEAM ARCHETYPES:
+Auto-detect and manually tag every team with an archetype that drives all trade logic:
+Auto-detection rules:
+	•	Contender 🏆 — average starter age over 27 AND high total FC roster value AND few picks
+	•	Rebuilder 🔨 — average starter age under 25 OR lots of early picks OR low total roster FC value
+	•	Middle of Pack 📈 — balanced age and value, no clear identity, needs difference makers
+	•	Aging Contender ⚠️ — high roster value but average age over 29, window closing
+Manual override tags for The Derk League — apply these as defaults but allow any user to change their own tag:
+	•	The Derk Knights = Rebuilder 🔨
+	•	Vol_Hall_a = Middle of Pack 📈
+	•	Deaunuts = Contender 🏆
+	•	All other teams = auto-detected
+How archetypes drive trade logic:
+	•	Contender should receive proven veteran starters, give picks and youth
+	•	Rebuilder should receive picks and young rising players, give aging stable or declining players
+	•	Middle of Pack needs one or two elite difference makers to break out, willing to overpay in picks
+	•	Aging Contender should be selling declining veterans before value drops further
+Show the archetype badge on every team card in All Teams tab, on the trade analyzer team selection screen, and in every trade proposal. Every trade verdict must include a line: ‘Archetype fit: This trade [makes sense / conflicts] with [team name]’s [archetype] strategy

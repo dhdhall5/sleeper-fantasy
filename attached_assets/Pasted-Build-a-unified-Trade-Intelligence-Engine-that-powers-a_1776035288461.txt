@@ -1,0 +1,71 @@
+Build a unified Trade Intelligence Engine that powers all three existing trade functions. Do not change any UI or entry points. Three surgical changes only:
+CHANGE 1 — BUILD THESE DATA TABLES ON SERVER STARTUP AND CACHE THEM:
+Table 1 — Player Classification per team:
+	•	For each team sort all players by FC value descending
+	•	At each position: highest FC value player = STARTER, next 1-2 = FLEX, rest = DEPTH
+	•	Special rule: In 14-team SUPER_FLEX, top 2 QBs on every roster = STARTER regardless of value
+	•	Store as: {owner_id: {player_id: {classification: STARTER/FLEX/DEPTH, position_rank: 1/2/3}}}
+Table 2 — Team Surplus/Need per position:
+	•	SURPLUS: team has 2+ STARTERs at a position
+	•	NEED: team has 0-1 STARTERs at a position
+	•	NEUTRAL: team has exactly 1 STARTER and 1 FLEX at a position
+	•	Store as: {owner_id: {QB: SURPLUS/NEED/NEUTRAL, RB: …, WR: …, TE: …}}
+Table 3 — Fair Value Decision Table:
+	•	For every trade evaluate sending team archetype + receiving team archetype + player trajectory + position scarcity to calculate fair value range
+	•	Rules:
+	•	Rebuilder sends veteran to Contender = FC value ±10% in picks
+	•	Rebuilder sends young stud = FC value +10% premium
+	•	Contender sends picks to Rebuilder = FC value ±5%
+	•	Middle of Pack targeting starter = FC value +5-10% acceptable overpay
+	•	Contender sends aging starter = FC value -10% discount acceptable
+	•	Same archetype trades = FC value ±5%
+	•	QB in SUPER_FLEX = multiply base value by 1.2 for scarcity
+	•	Elite RB = multiply by 1.15
+	•	WR = multiply by 1.0
+	•	TE = multiply by 1.1
+	•	STARTER classification = never discount more than 10%
+	•	FLEX classification = can vary 15%
+	•	DEPTH classification = can vary 20%
+	•	Motivation alignment: both teams get what they need = +5 fairness score bonus
+	•	Trajectory mismatch: sending rising for declining = flag as unfavorable regardless of value
+Table 4 — Post Trade Impact:
+	•	After any proposed trade simulate both rosters
+	•	Check: does each team still have a STARTER at every required position?
+	•	Check: does the receiving team gain at their NEED position?
+	•	Check: does the sending team lose at their only STARTER position?
+	•	Flag any trade that leaves a team with zero STARTERs at any position as CRITICAL WARNING
+	•	Flag any trade that doesn’t address the receiving team’s NEED as LOW probability
+CHANGE 2 — CREATE ONE CORE FUNCTION called evaluateTrade(sendingTeam, receivingTeam, assetsOffered, assetsRequested):
+This function:
+	•	Takes any combination of players and picks from any two teams
+	•	Runs all 4 tables against the proposed trade
+	•	Returns: fairness score, value breakdown, motivation alignment score, post-trade impact for both teams, likelihood of acceptance, and a one paragraph explanation
+	•	This is the ONLY place trade evaluation logic lives
+	•	All three trade functions call this single function
+CHANGE 3 — WIRE ALL THREE EXISTING FUNCTIONS TO USE evaluateTrade():
+Find A Trade:
+	•	When user selects assets to offer, call evaluateTrade() for each potential match
+	•	Pass sending team = selected user, receiving team = each potential partner
+	•	Return ranked results using evaluateTrade() scores
+Get A Player:
+	•	When user selects target position/player, find teams with SURPLUS at that position using Table 2
+	•	For each surplus team build an auto offer using Table 3 fair value ranges
+	•	Call evaluateTrade() to score and validate each proposal
+	•	Return ranked results
+Trade Analyzer:
+	•	When user selects specific players on both sides, call evaluateTrade() directly
+	•	Display full breakdown from evaluateTrade() output
+	•	Add What If They Say No button that calls evaluateTrade() with slightly adjusted assets
+VALIDATION RULES applied inside evaluateTrade() before returning any proposal:
+	•	Selected assets are always locked on sending side — never substituted
+	•	Both teams must benefit based on their archetype and needs
+	•	Value must be within fair range from Table 3
+	•	Post-trade impact from Table 4 must not create critical roster holes
+	•	If any check fails flag it clearly but still return the proposal with warnings
+	•	Never return zero results — if strict matching fails return best available with warning labels
+DATA INTEGRITY:
+	•	Every player and pick must be pulled from their correct owner_id roster only
+	•	Add a validation log on server startup that confirms every player and pick is assigned to exactly one team
+	•	No player or pick should appear on multiple rosters
+	•	Log any discrepancies as errors
+Keep all existing UI, styling, entry points, and features completely unchanged. This is a backend logic unification only.

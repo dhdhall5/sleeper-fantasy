@@ -1,0 +1,39 @@
+Two upgrades in one update:
+UPGRADE 1 — FIX PICK VALUES FOR 14-TEAM SUPER_FLEX LEAGUE:
+Current pick values are undervalued because they use generic league settings. Fix this by:
+	•	Scale all pick values up by 25% from Fantasy Calc baseline to account for 14-team depth and SUPER_FLEX format where QB scarcity inflates early pick value
+	•	Use this adjusted pick value scale:
+	•	1st round picks: Early 1st (1.01-1.03) = 8,500, Mid 1st (1.04-1.07) = 7,000, Late 1st (1.08-1.14) = 5,500
+	•	2nd round picks: Early 2nd = 4,000, Mid 2nd = 3,000, Late 2nd = 2,200
+	•	3rd round picks: Early 3rd = 1,800, Mid 3rd = 1,400, Late 3rd = 1,000
+	•	4th round picks: 800-500 scaling from early to late
+	•	Before draft order is known, use mid-round values as default
+	•	Show pick slot when known (1.03) or round range when unknown (Early 1st)
+	•	Factor SUPER_FLEX premium into QB-needy teams — picks are worth even more to teams without elite QBs
+UPGRADE 2 — EXPANDED DYNAMIC TEAM ARCHETYPES:
+Replace the simple Rebuild/Win Now binary with these 8 archetypes and make them dynamic:
+Archetype definitions and auto-detection rules:
+	•	Dynasty Contender 🏆 — total roster FC value top 3 in league AND average starter age 24-28 AND has young depth behind starters. The ideal state — winning now with future secured
+	•	Win Now ⚡ — high roster value AND average starter age 29-31 AND few picks. Window open but closing, should be aggressive
+	•	Aging Contender ⚠️ — was top 3 roster value but average age now 30+ AND declining FC trajectory on key players. Should be transitioning but risks being caught flat footed
+	•	Rising Contender 🚀 — roster FC value rising fast AND average age under 26 AND has early picks. Young elite talent breaking through, ascending rapidly
+	•	Middle of Pack 📈 — roster value ranked 6-10 in league AND mixed age profile AND no clear identity. Needs 1-2 difference makers to break out
+	•	Strategic Rebuilder 🔨 — intentionally low roster value AND holds multiple early picks AND average age under 24. Tearing down on purpose with a plan
+	•	Accidental Rebuilder 😬 — low roster value AND older players AND late picks only. Bad team with no clear path forward, needs strategic intervention
+	•	Transitioning 🔄 — mixed roster of players age 24-26 and 30+ AND recently made significant trades. Moving between phases, identity unclear
+Dynamic recalculation rules — automatically reassess every team’s archetype when:
+	•	Any trade is completed — reassess both teams involved immediately
+	•	FC values are refreshed — reassess any team whose total value changed by more than 5%
+	•	A player’s age crosses 25, 28, or 30 — reassess that team
+	•	Pick holdings change — reassess when a team gains or loses a first round pick
+Manual override defaults for The Derk League:
+	•	The Derk Knights = Strategic Rebuilder 🔨
+	•	Vol_Hall_a = Middle of Pack 📈
+	•	Deaunuts = Dynasty Contender 🏆
+	•	All others = auto-detected, recalculated dynamically
+Display rules:
+	•	Show archetype badge on every team card in All Teams tab
+	•	Show on trade analyzer team selection screen
+	•	Include in every trade proposal and verdict
+	•	Every trade verdict must include: ‘Archetype fit: This trade [makes sense / conflicts with / accelerates] [team]’s [archetype] strategy and here is why’
+	•	In Find A Trade, prioritize matches between complementary archetypes — Win Now teams trading with Strategic Rebuilders, Rising Contenders trading with Aging Contenders etc
